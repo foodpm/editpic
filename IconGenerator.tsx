@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Download, RefreshCw, Image as ImageIcon } from 'lucide-react';
+import { Download, RefreshCw, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { UploadZone } from './UploadZone';
 import { readFileAsDataURL, loadImage, resizeImageToBlob, resizeImageToDataURL, generateZip, downloadBlob } from './imageUtils';
 import { useLanguage } from './LanguageContext';
@@ -55,7 +55,7 @@ export const IconGenerator: React.FC = () => {
 
   if (!originalImage) {
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in-up">
         <UploadZone 
           onFileSelect={(files) => processImage(files[0])}
           label={t.iconGen.label}
@@ -66,29 +66,29 @@ export const IconGenerator: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-100 text-green-600 rounded-lg">
-            <ImageIcon className="w-5 h-5" />
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Toolbar */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white/50 rounded-3xl p-6 border border-white/60">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-green-100 text-green-600 shadow-inner">
+            <CheckCircle className="w-7 h-7" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">{t.iconGen.previewTitle}</h3>
-            <p className="text-sm text-slate-500">{t.iconGen.previewDesc}</p>
+            <h3 className="text-xl font-bold text-slate-800">{t.iconGen.previewTitle}</h3>
+            <p className="text-slate-500 font-medium">{t.iconGen.previewDesc}</p>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <button
             onClick={reset}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all"
+            className="flex-1 md:flex-none px-5 py-3 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm hover:shadow"
           >
-            <RefreshCw className="w-4 h-4" />
             {t.common.reset}
           </button>
           <button
             onClick={handleDownload}
             disabled={isProcessing}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl shadow-lg shadow-indigo-200 hover:translate-y-[-2px] hover:shadow-indigo-300 transition-all disabled:opacity-70 disabled:transform-none"
           >
             {isProcessing ? (
               <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -100,21 +100,23 @@ export const IconGenerator: React.FC = () => {
         </div>
       </div>
 
+      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {previews.map((preview) => (
-          <div key={preview.size} className="group relative bg-white rounded-2xl border border-slate-100 p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="flex-1 flex items-center justify-center min-h-[160px] w-full bg-[url('https://bg.siteorigin.com/blog/wp-content/uploads/2015/06/p6.png')] bg-slate-50 rounded-xl mb-4 overflow-hidden">
-               <img 
+          <div key={preview.size} className="group relative bg-white rounded-[2rem] p-2 shadow-sm hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-500 border border-slate-100">
+             <div className="bg-slate-50 rounded-[1.5rem] aspect-square flex items-center justify-center relative overflow-hidden border border-slate-100 group-hover:border-indigo-100 transition-colors">
+                <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#4f46e5_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <img 
                  src={preview.url} 
                  alt={`${preview.size}x${preview.size}`}
                  style={{ width: preview.size, height: preview.size }}
-                 className="image-pixelated shadow-lg"
+                 className="image-pixelated shadow-xl group-hover:scale-110 transition-transform duration-500 ease-out"
                />
-            </div>
-            <div className="text-center w-full">
-              <div className="text-lg font-bold text-slate-800 tabular-nums">{preview.size} × {preview.size}</div>
-              <div className="text-xs text-slate-400 mt-1 font-mono bg-slate-50 py-1 px-2 rounded-full inline-block">icon{preview.size}.png</div>
-            </div>
+             </div>
+             <div className="p-4 text-center">
+                <div className="text-lg font-bold text-slate-800">{preview.size} x {preview.size}</div>
+                <div className="text-xs font-medium text-slate-400 uppercase tracking-wider mt-1">icon{preview.size}.png</div>
+             </div>
           </div>
         ))}
       </div>

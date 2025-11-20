@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image as ImageIcon, Layers, Scissors, Globe } from 'lucide-react';
+import { Image as ImageIcon, Layers, Scissors, Globe, Sparkles } from 'lucide-react';
 import { IconGenerator } from './IconGenerator';
 import { BatchResizer } from './BatchResizer';
 import { LanguageProvider, useLanguage } from './LanguageContext';
@@ -11,92 +11,93 @@ const MainLayout = () => {
   const { t, language, setLanguage } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-slate-50/50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-700 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-50/80 to-transparent -z-10" />
-      
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12">
-        {/* Top Bar */}
-        <div className="flex justify-end mb-4 md:mb-0">
+    <div className="min-h-screen relative overflow-hidden selection:bg-indigo-500/30 text-slate-800">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-200/40 rounded-full blur-[100px] animate-blob"></div>
+        <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-indigo-200/40 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-blue-200/40 rounded-full blur-[100px] animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        {/* Navbar */}
+        <nav className="flex justify-between items-center mb-16 animate-fade-in-up">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 text-white">
+              <Scissors className="w-6 h-6" />
+            </div>
+            <span className="font-bold text-xl tracking-tight text-slate-900 hidden sm:block">Resizer<span className="text-indigo-600">Pro</span></span>
+          </div>
           <button
             onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+            className="glass-card px-4 py-2 rounded-full hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2 group cursor-pointer"
           >
-            <Globe className="w-4 h-4" />
-            <span>{language === 'en' ? '中文' : 'English'}</span>
+            <Globe className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-colors" />
+            <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">{language === 'en' ? '中文' : 'English'}</span>
           </button>
-        </div>
+        </nav>
 
-        {/* Header */}
-        <header className="text-center mb-12 space-y-6 animate-fade-in-up">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-xl shadow-indigo-200 mb-2 transform hover:scale-105 transition-transform duration-300">
-            <Scissors className="w-10 h-10 text-white" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
-              {t.title}
-            </h1>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              {t.subtitle}
-            </p>
-          </div>
+        {/* Hero Section */}
+        <header className="text-center mb-12 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6">
+            {t.title}
+          </h1>
+          <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">
+            {t.subtitle}
+          </p>
         </header>
 
-        {/* Navigation Tabs */}
-        <div className="flex justify-center mb-10">
-          <div className="bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-200/60 inline-flex relative z-10">
-            <button
-              onClick={() => setActiveTab('icon')}
-              className={`
-                flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out
-                ${activeTab === 'icon' 
-                  ? 'bg-slate-900 text-white shadow-lg shadow-slate-200 scale-100' 
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }
-              `}
-            >
-              <ImageIcon className="w-4 h-4" />
-              {t.tabs.icon}
-            </button>
-            <button
-              onClick={() => setActiveTab('batch')}
-              className={`
-                flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out
-                ${activeTab === 'batch' 
-                  ? 'bg-slate-900 text-white shadow-lg shadow-slate-200 scale-100' 
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }
-              `}
-            >
-              <Layers className="w-4 h-4" />
-              {t.tabs.batch}
-            </button>
+        {/* Main Content Container */}
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          {/* Tab Switcher */}
+          <div className="flex justify-center mb-8">
+            <div className="glass-card p-1.5 rounded-2xl inline-flex relative shadow-xl shadow-indigo-500/5">
+              <button
+                onClick={() => setActiveTab('icon')}
+                className={`
+                  relative flex items-center gap-2.5 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ease-out
+                  ${activeTab === 'icon' 
+                    ? 'bg-white text-indigo-600 shadow-lg shadow-slate-200/50 ring-1 ring-black/5 scale-100' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/30'
+                  }
+                `}
+              >
+                <ImageIcon className={`w-4 h-4 ${activeTab === 'icon' ? 'fill-current' : ''}`} />
+                {t.tabs.icon}
+              </button>
+              <button
+                onClick={() => setActiveTab('batch')}
+                className={`
+                  relative flex items-center gap-2.5 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ease-out
+                  ${activeTab === 'batch' 
+                    ? 'bg-white text-indigo-600 shadow-lg shadow-slate-200/50 ring-1 ring-black/5 scale-100' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-white/30'
+                  }
+                `}
+              >
+                <Layers className={`w-4 h-4 ${activeTab === 'batch' ? 'fill-current' : ''}`} />
+                {t.tabs.batch}
+              </button>
+            </div>
+          </div>
+
+          {/* Tool Area */}
+          <div className="glass-panel rounded-[2.5rem] shadow-2xl shadow-indigo-100/50 p-6 md:p-10 min-h-[500px] relative">
+             {/* Content */}
+             <div className="relative z-10">
+                {activeTab === 'icon' ? <IconGenerator /> : <BatchResizer />}
+             </div>
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <main className="max-w-4xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl shadow-slate-200/50 border border-white/50 p-6 md:p-10 min-h-[400px] transition-all duration-500">
-             {activeTab === 'icon' ? <IconGenerator /> : <BatchResizer />}
-          </div>
-        </main>
-
         {/* Footer */}
-        <footer className="mt-16 text-center">
-          <p className="text-sm text-slate-400">© {new Date().getFullYear()} {t.title}</p>
-          <p className="text-xs text-slate-400 mt-1 opacity-75">{t.common.footer}</p>
+        <footer className="mt-16 pb-8 text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div className="inline-flex items-center justify-center gap-2 text-slate-400 text-sm font-medium bg-white/30 px-4 py-2 rounded-full backdrop-blur-sm">
+             <Sparkles className="w-3 h-3 text-yellow-500" />
+             <span>{t.common.footer}</span>
+          </div>
         </footer>
       </div>
-      
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

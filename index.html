@@ -5,28 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Resizer Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Protocol Check: Warn user if trying to run via file://
+      if (window.location.protocol === 'file:') {
+        document.addEventListener('DOMContentLoaded', () => {
+          const root = document.getElementById('root');
+          if (root) {
+            root.innerHTML = `
+              <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8fafc; font-family: system-ui, sans-serif;">
+                <div style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); max-width: 500px; text-align: center;">
+                  <h1 style="color: #ef4444; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">⚠️ Cannot Run Directly</h1>
+                  <p style="color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
+                    Browsers block ES Modules and TSX files when opened directly from the file system (file://) due to CORS security policies.
+                  </p>
+                  <div style="background: #f1f5f9; padding: 1rem; border-radius: 0.5rem; text-align: left; font-family: monospace; font-size: 0.9rem; color: #334155;">
+                    <strong>Solution:</strong><br/>
+                    1. Use VS Code "Live Server" extension<br/>
+                    2. Or run: <span style="color: #0f172a; background: #e2e8f0; padding: 2px 4px; border-radius: 4px;">npx http-server .</span><br/>
+                    3. Or use a bundler like Vite.
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        });
+        // Stop further execution
+        throw new Error("Application cannot run via file:// protocol. Please use a local web server.");
+      }
+
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            },
+            animation: {
+              'blob': 'blob 10s infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
     <style>
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
+        background-color: #f0f4f8;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* Glassmorphism Utilities */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
       }
     </style>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "jszip": "https://aistudiocdn.com/jszip@^3.10.1"
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>

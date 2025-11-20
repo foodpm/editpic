@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Download, Settings2, Trash2, Plus, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, Settings2, Trash2, Plus, Check, Image as ImageIcon } from 'lucide-react';
 import { UploadZone } from './UploadZone';
 import { readFileAsDataURL, loadImage, resizeImageToBlob, generateZip, downloadBlob } from './imageUtils';
 import { useLanguage } from './LanguageContext';
@@ -20,7 +20,6 @@ export const BatchResizer: React.FC = () => {
   const [keepRatio, setKeepRatio] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load saved preferences
   useEffect(() => {
     const savedW = localStorage.getItem('batchWidth');
     const savedH = localStorage.getItem('batchHeight');
@@ -47,7 +46,6 @@ export const BatchResizer: React.FC = () => {
       }
     }
     
-    // Auto-set dimensions based on first image if not set
     if (newImages.length > 0 && width === '' && height === '') {
        setWidth(newImages[0].originalWidth);
        setHeight(newImages[0].originalHeight);
@@ -58,7 +56,6 @@ export const BatchResizer: React.FC = () => {
 
   const handleDimensionChange = (type: 'width' | 'height', value: string) => {
     const val = parseInt(value);
-    
     if (isNaN(val)) {
         if (type === 'width') setWidth('');
         if (type === 'height') setHeight('');
@@ -94,29 +91,21 @@ export const BatchResizer: React.FC = () => {
       alert(t.batch.invalidDimensions);
       return;
     }
-
     if (images.length === 0) return;
 
     setIsProcessing(true);
     try {
       const processedFiles = await Promise.all(images.map(async (item) => {
         const img = await loadImage(item.previewUrl);
-        
         let targetW = w;
         let targetH = h;
-
-        // Recalculate per image if keeping ratio to avoid distortion
         if (keepRatio) {
             const ratio = item.originalHeight / item.originalWidth;
             targetH = Math.round(targetW * ratio);
         }
-
         const blob = await resizeImageToBlob(img, targetW, targetH);
         const namePart = item.file.name.substring(0, item.file.name.lastIndexOf('.'));
-        return {
-            name: `${namePart}_${targetW}x${targetH}.jpg`,
-            blob
-        };
+        return { name: `${namePart}_${targetW}x${targetH}.jpg`, blob };
       }));
 
       const zip = await generateZip(processedFiles);
@@ -130,41 +119,44 @@ export const BatchResizer: React.FC = () => {
   };
 
   return (
-    <div className="animate-fade-in space-y-8">
-      {/* Controls */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 text-slate-800 font-semibold">
-            <Settings2 className="w-5 h-5 text-indigo-500" />
-            <h3>{t.common.settings}</h3>
+    <div className="animate-fade-in-up space-y-8">
+      {/* Settings Panel */}
+      <div className="bg-gradient-to-br from-white to-indigo-50/30 rounded-[2rem] border border-white p-8 shadow-lg shadow-indigo-100/20">
+        <div className="flex items-center gap-3 mb-6">
+            <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-200 text-white">
+                <Settings2 className="w-5 h-5" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800">{t.common.settings}</h3>
         </div>
-        <div className="flex flex-col md:flex-row gap-6 items-end">
-            <div className="flex-1 w-full grid grid-cols-2 gap-4">
+
+        <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1 grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">{t.common.widthLabel}</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">{t.common.widthLabel}</label>
                     <input 
                         type="number" 
                         value={width}
                         onChange={(e) => handleDimensionChange('width', e.target.value)}
-                        placeholder={t.batch.widthPlaceholder}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all font-mono"
+                        placeholder="0"
+                        className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono text-xl font-bold text-slate-800"
                     />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">{t.common.heightLabel}</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">{t.common.heightLabel}</label>
                     <input 
                         type="number" 
                         value={height}
                         onChange={(e) => handleDimensionChange('height', e.target.value)}
-                        placeholder={t.batch.widthPlaceholder}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all font-mono"
+                        placeholder="0"
+                        className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono text-xl font-bold text-slate-800"
                     />
                 </div>
             </div>
             
-            <div className="flex items-center h-[46px]">
-                <label className="flex items-center gap-3 cursor-pointer group select-none">
-                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${keepRatio ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 group-hover:border-indigo-400'}`}>
-                        {keepRatio && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+            <div className="flex items-end pb-1">
+                <label className="flex items-center gap-4 cursor-pointer group select-none bg-white/80 px-6 py-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all w-full lg:w-auto">
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${keepRatio ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 bg-slate-50 group-hover:border-indigo-400'}`}>
+                        {keepRatio && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
                     </div>
                     <input 
                         type="checkbox" 
@@ -172,13 +164,13 @@ export const BatchResizer: React.FC = () => {
                         checked={keepRatio}
                         onChange={(e) => setKeepRatio(e.target.checked)}
                     />
-                    <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900">{t.common.maintainRatio}</span>
+                    <span className="font-bold text-slate-700 group-hover:text-indigo-700 transition-colors">{t.common.maintainRatio}</span>
                 </label>
             </div>
         </div>
       </div>
 
-      {/* Upload & List */}
+      {/* Content Area */}
       {images.length === 0 ? (
         <UploadZone 
             multiple 
@@ -188,18 +180,21 @@ export const BatchResizer: React.FC = () => {
         />
       ) : (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h3 className="text-slate-600 font-medium">{t.common.selectedImages} <span className="ml-2 bg-slate-100 px-2 py-0.5 rounded-full text-xs font-bold text-slate-800">{images.length}</span></h3>
-                <div className="flex gap-3">
-                    <label className="cursor-pointer px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-sm sticky top-0 z-20">
+                <div className="flex items-center gap-3 px-2">
+                   <div className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-sm font-bold">{images.length}</div>
+                   <span className="font-bold text-slate-700">{t.common.selectedImages}</span>
+                </div>
+                <div className="flex gap-3 w-full sm:w-auto">
+                    <label className="cursor-pointer px-4 py-2.5 text-sm font-bold text-indigo-700 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors flex items-center gap-2 hover:shadow-sm border border-indigo-200/50 flex-1 sm:flex-none justify-center">
                         <Plus className="w-4 h-4" />
-                        {t.common.addMore}
+                        <span>{t.common.addMore}</span>
                         <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => e.target.files && handleFilesSelect(Array.from(e.target.files))} />
                     </label>
                     <button
                         onClick={handleBatchDownload}
                         disabled={isProcessing || !width || !height}
-                        className="flex items-center justify-center gap-2 px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:shadow-none"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:transform-none"
                     >
                         {isProcessing ? (
                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -211,22 +206,21 @@ export const BatchResizer: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {images.map((img) => (
-                    <div key={img.id} className="group relative bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                    <div key={img.id} className="group relative bg-white p-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <button 
                             onClick={() => removeImage(img.id)}
-                            className="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-red-500 p-1.5 rounded-full shadow-sm border border-slate-100 opacity-0 group-hover:opacity-100 transition-all z-10"
-                            title={t.common.remove}
+                            className="absolute top-2 right-2 bg-white/90 backdrop-blur text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl shadow-sm border border-slate-100 opacity-0 group-hover:opacity-100 transition-all z-10 scale-90 group-hover:scale-100"
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
-                        <div className="aspect-square bg-slate-50 rounded-lg overflow-hidden mb-3 relative">
-                            <img src={img.previewUrl} alt="" className="w-full h-full object-cover" />
+                        <div className="aspect-[4/3] bg-slate-50 rounded-xl overflow-hidden mb-3 relative border border-slate-50">
+                            <img src={img.previewUrl} alt="" className="w-full h-full object-contain p-2" />
                         </div>
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-slate-700 truncate" title={img.file.name}>{img.file.name}</p>
-                            <p className="text-[10px] text-slate-400">{img.originalWidth} × {img.originalHeight}</p>
+                        <div className="px-1">
+                            <p className="text-sm font-bold text-slate-700 truncate" title={img.file.name}>{img.file.name}</p>
+                            <p className="text-xs text-slate-400 font-mono mt-0.5 bg-slate-50 inline-block px-1.5 py-0.5 rounded">{img.originalWidth} × {img.originalHeight}</p>
                         </div>
                     </div>
                 ))}

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Upload, FileImage } from 'lucide-react';
+import { Upload, FileImage, Sparkles } from 'lucide-react';
 
 interface UploadZoneProps {
   onFileSelect: (files: File[]) => void;
@@ -49,33 +49,36 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
       onDrop={handleDrop}
       className={`
         relative group cursor-pointer
-        border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 ease-out
+        rounded-[2rem] p-16 text-center transition-all duration-500 ease-out
+        border-3 border-dashed
         ${isDragOver 
-          ? 'border-indigo-500 bg-indigo-50/80 scale-[1.01] shadow-lg shadow-indigo-100' 
-          : 'border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-md'
+          ? 'border-indigo-500 bg-indigo-50/50 scale-[1.02] shadow-xl shadow-indigo-100 ring-4 ring-indigo-50' 
+          : 'border-slate-200 bg-slate-50/50 hover:border-indigo-300 hover:bg-white hover:shadow-lg hover:shadow-slate-100'
         }
       `}
     >
       <input
         type="file"
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
         onChange={handleFileInput}
         accept="image/*"
         multiple={multiple}
       />
       
-      <div className="flex flex-col items-center justify-center space-y-5 pointer-events-none">
+      <div className="flex flex-col items-center justify-center space-y-6 pointer-events-none relative z-10">
         <div className={`
-          p-5 rounded-2xl transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-3
-          ${isDragOver ? 'bg-indigo-100 text-indigo-600 rotate-6' : 'bg-slate-100 text-slate-400 group-hover:text-indigo-500 group-hover:bg-indigo-50'}
+          relative p-6 rounded-2xl transition-all duration-500 transform group-hover:scale-110 group-hover:-rotate-3
+          ${isDragOver ? 'bg-indigo-500 text-white rotate-0 shadow-lg shadow-indigo-300' : 'bg-white text-indigo-500 shadow-md shadow-slate-100 group-hover:bg-indigo-500 group-hover:text-white group-hover:shadow-indigo-200'}
         `}>
-          {multiple ? <FileImage className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
+          {multiple ? <FileImage className="w-10 h-10" /> : <Upload className="w-10 h-10" />}
+          {isDragOver && <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-bounce" />}
         </div>
-        <div className="space-y-1">
-          <h3 className="text-lg font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">
+        
+        <div className="space-y-2 max-w-xs mx-auto">
+          <h3 className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
             {label}
           </h3>
-          <p className="text-sm text-slate-500">
+          <p className="text-slate-500 font-medium text-sm leading-relaxed">
             {subLabel}
           </p>
         </div>
