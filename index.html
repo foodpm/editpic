@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片尺寸调整工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>图片尺寸调整工具</h1>
+        </header>
+
+        <!-- Tab 导航 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="icon">插件 icon 尺寸调整</button>
+            <button class="tab-btn" data-tab="batch">批量图片尺寸调整</button>
+        </div>
+
+        <main>
+            <!-- Tab 1: 插件 icon 尺寸调整 -->
+            <div class="tab-content active" id="iconTab">
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7,10 12,15 17,10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <h3>上传图片生成插件 icon</h3>
+                            <p>自动生成 16×16、48×48、128×128 三种尺寸</p>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+                </div>
+
+                <div class="icon-preview-section" id="iconPreviewSection" style="display: none;">
+                    <div class="icon-preview-header">
+                        <h3>预览</h3>
+                        <div class="icon-actions">
+                            <button id="iconDownloadBtn" class="btn btn-success">批量下载</button>
+                            <button id="iconResetBtn" class="btn btn-secondary">重新上传</button>
+                        </div>
+                    </div>
+
+                    <div class="icon-grid">
+                        <div class="icon-item">
+                            <canvas id="canvas16" width="16" height="16"></canvas>
+                            <div class="icon-info">
+                                <div class="icon-size">16 × 16</div>
+                                <div class="icon-name">icon16.png</div>
+                            </div>
+                        </div>
+                        <div class="icon-item">
+                            <canvas id="canvas48" width="48" height="48"></canvas>
+                            <div class="icon-info">
+                                <div class="icon-size">48 × 48</div>
+                                <div class="icon-name">icon48.png</div>
+                            </div>
+                        </div>
+                        <div class="icon-item">
+                            <canvas id="canvas128" width="128" height="128"></canvas>
+                            <div class="icon-info">
+                                <div class="icon-size">128 × 128</div>
+                                <div class="icon-name">icon128.png</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: 批量图片尺寸调整 -->
+            <div class="tab-content" id="batchTab">
+                <div class="batch-controls">
+                    <div class="size-input-section">
+                        <h3>目标尺寸</h3>
+                        <div class="size-inputs">
+                            <div class="input-group">
+                                <label for="batchWidth">宽度 (px)</label>
+                                <input type="number" id="batchWidth" min="1" max="5000" placeholder="例如: 1024">
+                            </div>
+                            <div class="input-group">
+                                <label for="batchHeight">高度 (px)</label>
+                                <input type="number" id="batchHeight" min="1" max="5000" placeholder="例如: 1024">
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="batchKeepRatio" checked>
+                            <label for="batchKeepRatio">保持宽高比</label>
+                        </div>
+                    </div>
+
+                    <div class="upload-section">
+                        <div class="upload-area" id="batchUploadArea">
+                            <div class="upload-content">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <h3>选择多张图片</h3>
+                                <p>支持 JPG、PNG、GIF 格式</p>
+                            </div>
+                            <input type="file" id="batchFileInput" accept="image/*" multiple hidden>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="batch-preview" id="batchPreview" style="display: none;">
+                    <div class="preview-header">
+                        <h3>已选择 <span id="imageCount">0</span> 张图片</h3>
+                        <button id="batchDownloadBtn" class="btn btn-success">批量下载</button>
+                    </div>
+                    <div class="preview-grid" id="previewGrid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
